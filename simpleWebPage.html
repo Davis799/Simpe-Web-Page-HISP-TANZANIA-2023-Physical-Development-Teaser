@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HISP TANZANIA Physical Development Teaser Question, By Davis
+    </title>
+    <style>
+        table {
+            border-collapse: collapse;
+            width: 75%
+        }
+
+        th {
+            text-align: center;
+            font-weight: 700;
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+            padding: 5px;
+            border: black solid 2.3px;
+        }
+
+        td {
+            text-align: right;
+            font-weight: 500;
+
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+            padding: 5px;
+            border: black solid 2.3px;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="tableContainer" style="display: flex; align-items: center; justify-content: center;"></div>
+    <script src="./data.js"></script>
+    <script>
+        function generateTable(JSONData) {
+            var table = document.createElement("table")
+            var thead = document.createElement("thead")
+            var tbody = document.createElement("tbody")
+            var tableContainer = document.getElementById("tableContainer")
+            var headers = JSONData['headers']
+            var metaData = JSONData['metaData']
+            var items = metaData['items']
+            var dimensions = metaData['dimensions']
+            var rows = JSONData['rows']
+
+            //generate headers
+            var headerRow = document.createElement('tr')
+            var th = document.createElement('th')
+            th.rowSpan = 3
+            th.colSpan = 1
+            th.textContent = ""
+            headerRow.appendChild(th)
+            thead.appendChild(headerRow)
+
+            var headerRow2 = document.createElement('tr')
+            var headerRow3 = document.createElement('tr')
+            //loop through organization units for headers
+            dimensions['ou'].forEach((organizationUnit) => {
+                var th = document.createElement('th')
+                th.colSpan = 5
+                th.textContent = items[organizationUnit].name
+                headerRow2.appendChild(th)
+                thead.appendChild(headerRow2)
+                //loop through data for headers
+                dimensions['dx'].forEach((data) => {
+                    var th = document.createElement('th')
+                    th.colSpan = 1
+                    th.textContent = items[data].name
+                    headerRow3.appendChild(th)
+                    thead.appendChild(headerRow3)
+
+                })
+            })
+
+            //generate rows
+            //loop through periods for values
+            dimensions['pe'].forEach((period) => {
+                var tr = document.createElement('tr')
+                var td = document.createElement('td')
+                td.textContent = items[period].name
+                tr.appendChild(td)
+                //loop through organization units for values
+                dimensions['ou'].forEach((organizationUnit) => {
+                    //loop through data for values
+                    dimensions['dx'].forEach((data) => {
+                        //loop through values
+                        rows.forEach((value) => {
+                            var td = document.createElement('td')
+                            //condition to check for correct value corresponding to the correct column and row
+                            if ((value[0] == data) && (value[1] == organizationUnit) && (value[2] == period)) {
+                                td.textContent = value[3];
+                                tr.appendChild(td)
+                                tbody.appendChild(tr)
+                            }
+                        })
+                    })
+                })
+            })
+
+            //appending table head and table body to the table
+            table.appendChild(thead)
+            table.appendChild(tbody)
+            //appending table to the div element
+            tableContainer.appendChild(table)
+        }
+
+        //calling of the function
+        generateTable(data)
+
+    </script>
+
+</body>
+
+</html>
